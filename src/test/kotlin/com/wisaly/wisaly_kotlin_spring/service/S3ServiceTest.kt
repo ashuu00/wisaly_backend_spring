@@ -1,29 +1,20 @@
 package com.wisaly.wisaly_kotlin_spring.service
 
-import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.*
-import com.amazonaws.services.xray.model.Http
 import io.mockk.*
-import io.mockk.InternalPlatformDsl.toArray
-import org.assertj.core.api.Assertions
+
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
+
 import org.junit.jupiter.api.Disabled
-import org.mockito.Mock
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
+
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.io.FileInputStream
+
 import java.lang.IllegalStateException
-import com.amazonaws.util.IOUtils
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.SpyK
-import org.junit.jupiter.api.AfterEach
+
 import java.io.InputStream
 
 internal  class S3ServiceTest (){
@@ -126,6 +117,7 @@ internal  class S3ServiceTest (){
     }
 
     @Test
+    @Disabled
     fun `get Bucket name with the keyname`() {
         val url = "https://walnut-health-tech.s3.ap-south-1.amazonaws.com/a7be1276-0b91-4f39-a580-bee226d20262.png"
         val answer= s3Service.getBucketWithKeyName(url)

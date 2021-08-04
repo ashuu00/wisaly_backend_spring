@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.*
 class LikeCommentController(private val likeCommentService: LikeCommentService) {
 
     @PostMapping("v1/like/blog")
-    fun likeBlog(@RequestAttribute("user_id") user_id:Long,
+    fun likeBlog(@RequestAttribute("user_id") user_id:Long?,
                  @RequestParam("blog_id") blog_id: Long):ResponseEntity<String>{
         //add checks if user and blogs exist
+        if(user_id==null)throw IllegalStateException("No user found that can like the post")
         return ResponseEntity(likeCommentService.likeBlog(user_id,blog_id),HttpStatus.CREATED)
     }
 }

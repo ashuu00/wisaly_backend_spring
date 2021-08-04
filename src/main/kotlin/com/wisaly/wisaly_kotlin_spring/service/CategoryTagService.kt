@@ -2,7 +2,7 @@ package com.wisaly.wisaly_kotlin_spring.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wisaly.wisaly_kotlin_spring.models.Category
-import com.wisaly.wisaly_kotlin_spring.models.Tag
+import com.wisaly.wisaly_kotlin_spring.models.Keyword
 import com.wisaly.wisaly_kotlin_spring.repository.CategoryRepository
 import com.wisaly.wisaly_kotlin_spring.repository.TagRepository
 import org.springframework.stereotype.Service
@@ -16,7 +16,7 @@ class CategoryTagService(
         val jsonMapper = jacksonObjectMapper()
         when(type){
             "category"->return jsonMapper.writeValueAsString(categoryRepository.save(Category(name)))
-            "tag"-> return jsonMapper.writeValueAsString(tagRepository.save(Tag(name)))
+            "tag"-> return jsonMapper.writeValueAsString(tagRepository.save(Keyword(name)))
             else -> throw NoSuchFieldException("Type not declared correctly")
         }
     }

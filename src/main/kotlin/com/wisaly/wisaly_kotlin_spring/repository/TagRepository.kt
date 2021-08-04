@@ -2,13 +2,13 @@ package com.wisaly.wisaly_kotlin_spring.repository
 
 import com.wisaly.wisaly_kotlin_spring.dtos.queries.TagFull
 import com.wisaly.wisaly_kotlin_spring.dtos.queries.TagOnlyName
-import com.wisaly.wisaly_kotlin_spring.models.Tag
+import com.wisaly.wisaly_kotlin_spring.models.Keyword
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TagRepository: JpaRepository<Tag,String> {
+interface TagRepository: JpaRepository<Keyword,String> {
 
 
     @Query("SELECT * FROM tag T WHERE T.tag_name=?1",nativeQuery = true)

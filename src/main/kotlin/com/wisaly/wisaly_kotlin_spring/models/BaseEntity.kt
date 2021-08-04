@@ -1,12 +1,11 @@
 package com.wisaly.wisaly_kotlin_spring.models
-import lombok.Getter
-import lombok.Setter
 import java.sql.Timestamp
 import java.time.Instant
 import javax.persistence.*
 
 @Entity
-open class BaseEntity() {
+@MappedSuperclass
+abstract class BaseEntity() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

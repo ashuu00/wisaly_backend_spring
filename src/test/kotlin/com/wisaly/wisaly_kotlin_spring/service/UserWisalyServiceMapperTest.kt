@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeAll
 import java.sql.Timestamp
 import java.time.Instant
 
-internal class UserServiceTest {
+internal class UserWisalyServiceMapperTest {
 
     val userRepo = mockk<UserRepository>()
 

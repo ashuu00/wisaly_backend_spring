@@ -6,8 +6,8 @@ import java.sql.Timestamp
 import java.time.Instant
 import javax.persistence.*
 
-//
-data class followerId(
+
+ class followerId(
     val lead_user: User,
     val following_user: User,
 ):Serializable
@@ -18,10 +18,8 @@ data class followerId(
 @Entity
 @Table(uniqueConstraints = arrayOf(UniqueConstraint(name="follower_following_unique", columnNames = arrayOf("lead_user_id","following_user_id"))))
 @IdClass(followerId::class)
-data class Follower(
+ class Follower(
 
-    @Column
-    var created_at: Timestamp = Timestamp.from(Instant.now()),
 
     @ManyToOne()
     @Id
@@ -29,6 +27,8 @@ data class Follower(
 
     @ManyToOne()
     @Id
-    var following_user: User
+    var following_user: User,
 
+    @Column
+    var created_at: Timestamp = Timestamp.from(Instant.now())
     )

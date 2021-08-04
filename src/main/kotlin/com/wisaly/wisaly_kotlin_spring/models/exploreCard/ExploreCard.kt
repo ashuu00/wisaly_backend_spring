@@ -1,20 +1,18 @@
 package com.wisaly.wisaly_kotlin_spring.models.exploreCard
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.wisaly.wisaly_kotlin_spring.models.*
 import com.wisaly.wisaly_kotlin_spring.models.blog.Blog
-import com.wisaly.wisaly_kotlin_spring.models.Category
-import com.wisaly.wisaly_kotlin_spring.models.Image
-import com.wisaly.wisaly_kotlin_spring.models.Tag
-import com.wisaly.wisaly_kotlin_spring.models.Video
 import com.wisaly.wisaly_kotlin_spring.models.user.User
 import java.sql.Timestamp
 import java.time.Instant
 import javax.persistence.*
 
 @Entity
-data class ExploreCard(
+class ExploreCard(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long,
+    var id: Long=-1,
 
     @Column
     var created_at: Timestamp = Timestamp.from(Instant.now()),
@@ -22,33 +20,45 @@ data class ExploreCard(
     @Column
     var updated_at: Timestamp = Timestamp.from(Instant.now()),
 
-
-    @ManyToOne()
-     var user: User,
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     var user: User? = null,
 
     @Column()
-    var archived: Boolean,
+    var archived: Boolean= false,
 
     @Column()
     var title:String = "",
 
+    @Column(name = "card_link")
+    var link: String ="",
+
     @Column(columnDefinition = "varchar(500)")
     var description: String = "",
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "cards",fetch = FetchType.LAZY)
-     var images:MutableList<Image>,
+     var images:MutableList<Image> = mutableListOf(),
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "cards",fetch = FetchType.LAZY)
+    var blogs:MutableList<Blog> = mutableListOf(),
 
     @ManyToMany(mappedBy = "cards",fetch = FetchType.LAZY)
-    var blogs:MutableList<Blog>,
+    var categories:MutableList<Category> = mutableListOf(),
 
-    @ManyToMany()
-    var categories:MutableList<Category>,
+    @JsonIgnore
+    @ManyToMany(mappedBy = "cards",fetch = FetchType.LAZY)
+    var videos:MutableList<Video> = mutableListOf(),
 
-    @ManyToMany(mappedBy = "cards")
-    var videos:MutableList<Video>,
+    @JsonIgnore
+    @OneToMany(mappedBy = "card", fetch = FetchType.LAZY)
+    var comments: MutableList<Comment> = mutableListOf(),
 
-    @ManyToMany()
-    var tags:MutableList<Tag>
+    @OneToMany(mappedBy ="card", fetch = FetchType.LAZY)
+    var medias: MutableList<Media> = mutableListOf()
+
+//    @ManyToMany(mappedBy = "cards", fetch = FetchType.EAGER)
+//    var keywords:MutableList<Keyword>
 
 )

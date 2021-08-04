@@ -12,6 +12,8 @@ interface CategoryRepository:JpaRepository<Category, Long> {
     @Query("SELECT * FROM category ",nativeQuery = true)
     fun getAllCategories()
 
+    fun findByCategory(category:String):Category?
+
     @Query("SELECT * FROM category C WHERE C.category_name=?1",nativeQuery = true)
     fun getCategory(category_name:String):CategoryFull
 }

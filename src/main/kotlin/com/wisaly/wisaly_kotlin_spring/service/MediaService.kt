@@ -1,14 +1,14 @@
 package com.wisaly.wisaly_kotlin_spring.service
-
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wisaly.wisaly_kotlin_spring.dtos.mappersDto.SaveImageDto
-import com.wisaly.wisaly_kotlin_spring.dtos.uploadImageDto
+import com.wisaly.wisaly_kotlin_spring.dtos.queries.media.ImageSave
 import com.wisaly.wisaly_kotlin_spring.models.Image
 import com.wisaly.wisaly_kotlin_spring.repository.*
+import com.wisaly.wisaly_kotlin_spring.utils.JsonMapper
 import com.wisaly.wisaly_kotlin_spring.utils.objectMappers.SaveImageMapper
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.lang.IllegalStateException
+import kotlin.IllegalStateException
 
 @Service
 class MediaService(val userRepository: UserRepository,
@@ -18,27 +18,31 @@ class MediaService(val userRepository: UserRepository,
                    val draftImageRepostiory: DraftImageRepostiory,
                    val s3Service: S3Service) {
     //we need to get the link from express server for all the images and their size
-    fun saveUserPhoto(details : uploadImageDto, user_id:Long): SaveImageDto?{
-        val author = userRepository.findById(user_id).orElseGet(null)
-        val getPhoto= SaveImageDto(
-            photo_id = null,
-            img_link = details.img_src,
-            archived = false,
-            cards = mutableListOf(),
-            author = author
-            )
-        val newPhoto = imageRepository.save(saveImageMapper.toEntity(getPhoto));
-        return saveImageMapper.fromEntity(newPhoto);
+
+
+
+
+    fun saveToS3(images: List<MultipartFile>, user_id: Long?):String{
+        if(user_id==null) throw IllegalStateException("User not defined for uploading photo")
+        val imageLinks =  s3Service.uploadImageS3("wisaly-s3-test",images)
+        val response = mutableListOf<ImageSave>()
+        imageLinks.forEach {
+            response.add(imageRepository.addImage(it,user_id))
+
+        }
+        return JsonMapper.convertJson(response)
     }
 
-
-
-    fun saveToS3(images: List<MultipartFile>):List<String>{
-        return s3Service.uploadImageS3("wisaly-s3-test",images)
-    }
-
-    fun saveToCustomBucketS3(images: List<MultipartFile>, bucket: String):List<String>{
-        return s3Service.uploadImageS3(bucket,images)
+    fun saveToCustomBucketS3(images: List<MultipartFile>, bucket: String, user_id:Long?):String{
+        if(user_id==null) { //for blog images
+            return JsonMapper.convertJson(s3Service.uploadImageS3(bucket,images)[0])
+        }
+        val imageLinks =  s3Service.uploadImageS3(bucket,images)
+        val response = mutableListOf<ImageSave>()
+        imageLinks.forEach {
+            response.add(imageRepository.addImage(it,user_id))
+        }
+        return JsonMapper.convertJson(response)
     }
 
     fun saveToDraft(link: String,user_id:Long){
@@ -47,8 +51,8 @@ class MediaService(val userRepository: UserRepository,
         this.draftImageRepostiory.save(photo)
     }
 
-    fun savePhotoInBucket(images: List<MultipartFile>, bucket: String):List<String> {
-            return saveToCustomBucketS3 ( images, bucket )
+    fun savePhotoInBucket(images: List<MultipartFile>, bucket: String, user_id: Long?):String{
+            return saveToCustomBucketS3 ( images, bucket, user_id)
     }
 
     fun addDummy(link:String, uploadType:String?, user_id: Long):String{

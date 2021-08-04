@@ -2,16 +2,21 @@ package com.wisaly.wisaly_kotlin_spring.service
 
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.model.*
+import com.amazonaws.services.s3.model.Bucket
+import com.amazonaws.services.s3.model.CannedAccessControlList
+import com.amazonaws.services.s3.model.DeleteObjectsRequest
+import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.util.IOUtils
 import org.apache.http.entity.ContentType
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
+import java.util.UUID
+import java.util.Arrays
+import kotlin.collections.ArrayList
+
 
 @Service
 class S3Service(private val amazonS3: AmazonS3){
@@ -77,6 +82,11 @@ class S3Service(private val amazonS3: AmazonS3){
                 save(path,fileName, imageFile)
                 val getUrl = amazonS3.getUrl(path,fileName).toString()
                 imagesLink.add(getUrl)
+               if(imageFile.delete()){
+                   println("Deleted the file")
+               }else{
+                   println("Unable to delete file")
+               }
             } catch (e: IOException) {
                 throw IOException()
             }
@@ -85,12 +95,11 @@ class S3Service(private val amazonS3: AmazonS3){
     }
 
     //get bucketname and key from link to delete or update in s3
-    fun getBucketWithKeyName(url: String):List<String>{
-        val bucketName=url.split('.')[0].split("//")[1]
+    fun getBucketWithKeyName(url: String): List<String> {
+        val bucketName = url.split('.')[0].split("//")[1]
         val files = url.split('/')
         val fileName = files[files.lastIndex]
-        val returnList = listOf<String>(bucketName,fileName)
-        return returnList
+        return listOf(bucketName, fileName)
     }
 
     @Throws(IllegalStateException::class)

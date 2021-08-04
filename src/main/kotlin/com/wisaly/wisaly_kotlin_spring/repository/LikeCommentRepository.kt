@@ -1,6 +1,5 @@
 package com.wisaly.wisaly_kotlin_spring.repository
 
-import com.wisaly.wisaly_kotlin_spring.dtos.queries.BlogLike
 import com.wisaly.wisaly_kotlin_spring.models.blog.Blog
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying

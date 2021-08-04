@@ -8,7 +8,7 @@ import javax.persistence.*
 
 //use join to get images for user
 @Entity
-data class Image(
+ class Image(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id:Long = 0,
@@ -24,10 +24,12 @@ data class Image(
     @Column
     var archived: Boolean = false,
 
-    @ManyToMany
+    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     var cards: MutableList<ExploreCard>,
 
-    @ManyToOne
-    var author: User
+    @ManyToOne(fetch = FetchType.LAZY)
+    var author: User,
+
+
 
 )

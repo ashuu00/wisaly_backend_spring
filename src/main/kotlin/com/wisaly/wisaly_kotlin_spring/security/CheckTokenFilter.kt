@@ -18,13 +18,14 @@ class CheckTokenFilter : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val myCookies = request.getHeader("Authorization") ?: "undefined"
-        println("Header got is $myCookies")
-        if (myCookies != "undefined") {
+        val authHeader = request.getHeader("Authorization")?:"null"
+
+        println("Header got is $authHeader")
+        if (!authHeader.contains("null")&&authHeader.split(" ")[1]!="undefined" ) {
             try {
-                val user = Jwts.parser().setSigningKey("shreyanshinishuashu@2805").parseClaimsJws(myCookies.split(" ")[1]).body
+                val user = Jwts.parser().setSigningKey("shreyanshinishuashu@2805").parseClaimsJws(authHeader.split(" ")[1]).body
                 println("Issuer is ${user.issuer}")
-                request.setAttribute("user_id", user.issuer.toInt()) //the userid is still string, convert to int
+                request.setAttribute("user_id", user.issuer.toLong()) //the userid is still string, convert to int
             } catch (error: SignatureException) {
                 response.sendError(HttpStatus.FORBIDDEN.value(),"Jwt value cannot be trusted")
                 //throw IllegalAccessException("Jwt key is not defined")
@@ -35,6 +36,6 @@ class CheckTokenFilter : OncePerRequestFilter() {
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path: String = request.requestURI
-        return path.contains("/api/v1/public") || path.contains("/login")
+        return path.contains("/login")
     }
 }

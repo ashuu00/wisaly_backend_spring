@@ -7,7 +7,7 @@ import javax.persistence.*
 
 //need to test the
 @Entity
-data class CommentPost(
+ class CommentPost(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
@@ -21,13 +21,18 @@ data class CommentPost(
     @Column
     var comment_data: String = "",
 
-    @OneToOne()
+    @ManyToOne()
     var parent: CommentPost? = null,
 
     @OneToMany
     var replies:MutableList<CommentPost> = mutableListOf(),
 
     @ManyToOne
+    @JoinColumn(name = "card_id")
+    var card: ExploreCard,
+
+    @ManyToOne //one user can add multiple comments
+    @JoinColumn(name="author_id")
     var author:User
 
 

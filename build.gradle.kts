@@ -30,9 +30,9 @@ repositories {
 }
 
 dependencies {
-    implementation ("com.amazonaws","aws-java-sdk-core","1.11.1024")
-    implementation ("com.amazonaws","aws-java-sdk","1.11.948")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.35")
     implementation("io.jsonwebtoken","jjwt", "0.9.1")
+    implementation("org.flywaydb:flyway-core")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -40,11 +40,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor")
-    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database", "h2", "1.3.148")
     implementation("io.mockk:mockk:1.10.6")
