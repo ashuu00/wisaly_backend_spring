@@ -3,8 +3,7 @@ package com.wisaly.wisaly_kotlin_spring.models.user
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.wisaly.wisaly_kotlin_spring.dtos.enums.Genders
-import com.wisaly.wisaly_kotlin_spring.models.Image
-import com.wisaly.wisaly_kotlin_spring.models.Video
+import com.wisaly.wisaly_kotlin_spring.models.*
 import com.wisaly.wisaly_kotlin_spring.models.blog.Blog
 import com.wisaly.wisaly_kotlin_spring.models.exploreCard.CommentPost
 import com.wisaly.wisaly_kotlin_spring.models.exploreCard.ExploreCard
@@ -16,7 +15,7 @@ import javax.persistence.*
     name = "wisaly_user",
     indexes = [Index(name = "name_index", columnList = "first_name"),
             Index(name="created_user", columnList = "created_at") ])
-data class User(
+class User(
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,11 +30,14 @@ data class User(
     @Column(unique = true)
     var email: String = "",
 
-    @Column
-    var first_name: String = "",
+    @Column(name = "first_name")
+    var firstname: String = "",
 
-    @Column
-    var last_name: String = "",
+    @Column(name = "last_name")
+    var lastname: String = "",
+
+    @Column(columnDefinition = "varchar(30)",unique=true)
+    var username: String = email.split("@")[0],
 
     @Column
     var display_pic: String = "",
@@ -43,47 +45,68 @@ data class User(
     @Column
     var phone_no: String = "",
 
-    @Column
-    var account_owner: Boolean = false,
+    @Column(name="account_owner")
+    var accountOwner: Boolean = false,
 
     @Enumerated(EnumType.STRING)
     var gender: Genders = Genders.UNDEFINED,
+
+    @Column(name = "user_page_link")
+    var userPageLink: String,
+
+    @Column(columnDefinition = "varchar(200)")
+    var about:String?= null,
+
+    @Column(columnDefinition ="varchar(50)")
+    var city:String?= null,
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    var interests:MutableList<Category> = mutableListOf(),
 
     @Column
     var profile_complete: Boolean = false,
 
     @Column(columnDefinition = "varchar(30)")
-    var roles: String = "USER",
+    var role: String = "USER",
 
     @JsonIgnore
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
-    var explore_cards: MutableList<ExploreCard>,
+    var explore_cards: MutableList<ExploreCard> = mutableListOf(),
 
     @OneToMany(mappedBy = "author")
     @JsonIgnore
-    open var blogs: MutableList<Blog>,
+    open var blogs: MutableList<Blog> = mutableListOf(),
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     @JsonIgnore
-    open var images: MutableList<Image>,
+    open var images: MutableList<Image> =mutableListOf(),
 
-    @OneToMany(mappedBy = "lead_user",fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "following",fetch = FetchType.LAZY)
     @JsonIgnore
-    var followers: MutableList<Follower>,
+    var followers: MutableList<User> = mutableListOf(),
 
-    @OneToMany(mappedBy = "following_user",fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_relationship")
     @JsonIgnore
-    var following: MutableList<Follower>,
+    var following: MutableList<User> = mutableListOf(),
+
+    @OneToMany(mappedBy = "author")
+    @JsonIgnore
+    val comments:MutableList<Comment> = mutableListOf(),
 
 //    @OneToMany(mappedBy = "author",fetch = FetchType.LAZY)
 //    var draftimages:MutableList<Draftimages> = mutableListOf(),
 
     @JsonIgnore
-    @OneToMany(mappedBy = "author")
-    var videos: MutableList<Video>,
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    var videos: MutableList<Video> = mutableListOf(),
 
     @JsonIgnore
-    @OneToMany(mappedBy = "author")
-    var comments: MutableList<CommentPost>
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    var commentPosts: MutableList<CommentPost> = mutableListOf(),
+
+    /**Maps Id makes it one-directional, hence no eager fetching*/
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade =[CascadeType.PERSIST])
+    var feedbacks: MutableList<Feedback> = mutableListOf()
 
 )
